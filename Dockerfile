@@ -45,6 +45,8 @@ RUN npm install serverless-python-requirements serverless-secrets-plugin serverl
 RUN npm install -g newman --quiet
 # -----------------
 
+RUN conda update -n base -c defaults conda
+
 EXPOSE 8000
 USER $USERNAME
 ENV USER=$USERNAME
@@ -53,7 +55,6 @@ ENV PATH=$PATH:/home/$USERNAME/.local/bin/
 RUN conda init; exit 0
 RUN conda create -n py36 python=3.6 -y
 RUN conda install suds-jurko==0.6 -n py36 -y
-
 
 # Below is optional
 #########################################
