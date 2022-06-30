@@ -55,6 +55,7 @@ ENV PATH=$PATH:/home/$USERNAME/.local/bin/
 RUN conda init; exit 0
 RUN conda create -n py36 python=3.6 -y
 RUN conda install suds-jurko==0.6 -n py36 -y
+RUN echo "conda activate py36" >> /home/$USERNAME/.bashrc
 
 # Below is optional
 #########################################
