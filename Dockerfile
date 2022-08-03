@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL maintainer="Hayath"
 LABEL version="1.0"
@@ -8,10 +8,12 @@ ARG USERNAME
 ARG UID
 ARG PROJECT_PWD
 
-RUN apt-get remove git -y && apt-get update -y
+ENV TZ="Asia/Kolkata"
+RUN apt-get update -y
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
 
 # FF Specidif
-RUN apt-get install awscli libpq-dev nodejs npm -y
+RUN apt-get install libpq-dev nodejs npm -y
 
 # Install base utilities
 RUN apt-get update && \
@@ -28,15 +30,19 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
 # Put conda in path so we can use conda activate
 ENV PATH=$CONDA_DIR/bin:$PATH
 
+# RUN apt-get install awscli -y
 #########################################
 RUN useradd -ms /bin/bash $USERNAME -u $UID; exit 0
 RUN usermod -a -G sudo $USERNAME; exit 0
 WORKDIR "$PROJECT_PWD"
 RUN apt-get autoremove -y
+RUN apt-get update -y
+RUN apt-get install curl zip -y
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
 
-RUN npm install -g serverless --quiet
+RUN npm install --location=global serverless --quiet
 RUN npm install serverless-python-requirements serverless-secrets-plugin serverless-prune-plugin serverless-domain-manager serverless-api-compression --save-dev --quiet
-RUN npm install -g newman --quiet
+RUN npm install --location=global newman --quiet
 # -----------------
 
 RUN conda update -n base -c defaults conda
